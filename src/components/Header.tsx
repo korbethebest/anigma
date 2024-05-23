@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import style from "./Header.module.css";
+import { FileInfo } from "../types/types";
 
 interface HeaderProps {
-  onDirectoryChange: (files: string[], directories: string[]) => void;
+  onDirectoryChange: (files: FileInfo[], directories: string[]) => void;
 }
 
 export default function Header({ onDirectoryChange }: HeaderProps) {
@@ -16,7 +17,21 @@ export default function Header({ onDirectoryChange }: HeaderProps) {
       setDisplayDirectoryPath(documentsPath);
       const { files: fetchedFiles, directories: fetchedDirectories } =
         await window.electron.readDirectory(documentsPath);
-      onDirectoryChange(fetchedFiles, fetchedDirectories);
+      const filesWithName = await Promise.all(
+        fetchedFiles.map(async (file) => {
+          const fileName = await window.electron.getName(file);
+          const fileIcon = await window.electron.getFileIcon(file);
+          return { name: fileName, icon: fileIcon };
+        })
+      );
+      const directoriesWithName = await Promise.all(
+        fetchedDirectories.map(async (directory) => {
+          const directoryName = await window.electron.getName(directory);
+          return directoryName;
+        })
+      );
+
+      onDirectoryChange(filesWithName, directoriesWithName);
     };
     fetchDocumentsPath();
   }, []);
@@ -28,7 +43,21 @@ export default function Header({ onDirectoryChange }: HeaderProps) {
       setDisplayDirectoryPath(selectedPath);
       const { files: fetchedFiles, directories: fetchedDirectories } =
         await window.electron.readDirectory(selectedPath);
-      onDirectoryChange(fetchedFiles, fetchedDirectories);
+      const filesWithName = await Promise.all(
+        fetchedFiles.map(async (file) => {
+          const fileName = await window.electron.getName(file);
+          const fileIcon = await window.electron.getFileIcon(file);
+          return { name: fileName, icon: fileIcon };
+        })
+      );
+      const directoriesWithName = await Promise.all(
+        fetchedDirectories.map(async (directory) => {
+          const directoryName = await window.electron.getName(directory);
+          return directoryName;
+        })
+      );
+
+      onDirectoryChange(filesWithName, directoriesWithName);
     }
   };
 

@@ -1,12 +1,13 @@
 import { useState } from "react";
 import Header from "./components/Header";
+import { FileInfo } from "./types/types";
 
 function App() {
-  const [files, setFiles] = useState<string[]>([]);
+  const [files, setFiles] = useState<FileInfo[]>([]);
   const [directories, setDirectories] = useState<string[]>([]);
 
   const handleDirectoryChange = (
-    newFiles: string[],
+    newFiles: FileInfo[],
     newDirectories: string[]
   ) => {
     setFiles(newFiles);
@@ -28,7 +29,10 @@ function App() {
             <h3>Files:</h3>
             <ul>
               {files.map((file, index) => (
-                <li key={index}>{file}</li>
+                <li key={index}>
+                  <img src={file.icon} alt={file.name} width={32} height={32} />
+                  {file.name}
+                </li>
               ))}
             </ul>
           </div>

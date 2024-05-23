@@ -13,4 +13,7 @@ contextBridge.exposeInMainWorld("electron", {
   readDirectory: (dirPath: string) =>
     ipcRenderer.invoke("read-directory", dirPath),
   selectDirectory: () => ipcRenderer.invoke("select-directory"),
+  getName: (filePath: string) => ipcRenderer.invoke("get-name", filePath),
+  getFileIcon: (filePath: string) =>
+    ipcRenderer.invoke("get-file-icon", filePath),
 });

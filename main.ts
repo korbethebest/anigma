@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, dialog } from "electron";
+import { app, BrowserWindow, ipcMain, dialog, nativeImage } from "electron";
 import * as path from "path";
 import * as os from "os";
 import * as url from "url";
@@ -57,11 +57,11 @@ ipcMain.handle("read-directory", async (event, dirPath) => {
     const directories: string[] = [];
 
     for (const entry of entries) {
-      const entryName = entry.name;
+      const entryPath = path.join(dirPath, entry.name);
       if (entry.isFile()) {
-        files.push(entryName);
+        files.push(entryPath);
       } else if (entry.isDirectory()) {
-        directories.push(entryName);
+        directories.push(entryPath);
       }
     }
 
@@ -80,4 +80,46 @@ ipcMain.handle("select-directory", async () => {
   } else {
     return result.filePaths[0];
   }
+});
+
+ipcMain.handle("get-name", async (event, filePath) => {
+  const name = await path.basename(filePath);
+  return name;
+});
+
+ipcMain.handle("get-file-icon", async (event, filePath) => {
+  const ext = await path.extname(filePath).toLowerCase();
+  let defaultIconPath = "/file-regular.png";
+  const audioExtensions = [".mp3", ".wav", ".aac", ".flac"];
+  const videoExtensions = [
+    ".mp4",
+    ".avi",
+    ".mkv",
+    ".mov",
+    ".wmv",
+    ".flv",
+    ".webm",
+  ];
+  const imageExtensions = [
+    ".jpeg",
+    ".jpg",
+    ".png",
+    ".gif",
+    ".bmp",
+    ".webp",
+    ".svg",
+  ];
+
+  if (ext === ".txt") {
+    defaultIconPath = "/file-lines-regular.png";
+  } else if (ext === ".pdf") {
+    defaultIconPath = "/file-pdf-regular.png";
+  } else if (audioExtensions.includes(ext)) {
+    defaultIconPath = "/file-audio-regular.png";
+  } else if (videoExtensions.includes(ext)) {
+    defaultIconPath = "/file-video-regular.png";
+  } else if (imageExtensions.includes(ext)) {
+    defaultIconPath = "/file-image-regular.png";
+  }
+  return defaultIconPath;
 });
