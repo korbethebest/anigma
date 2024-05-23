@@ -7,7 +7,9 @@ declare global {
       on: (channel: string, func: (...args: any[]) => void) => void;
     };
     getDocumentsPath: () => Promise<string>;
-    readDirectory: (dirPath: string) => Promise<string[]>;
+    readDirectory: (
+      dirPath: string
+    ) => Promise<{ files: string[]; directories: string[] }>;
     selectDirectory: () => Promise<string | null>;
   }
   interface Window {

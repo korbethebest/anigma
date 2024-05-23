@@ -50,7 +50,25 @@ ipcMain.handle("get-documents-path", () => {
 });
 
 ipcMain.handle("read-directory", async (event, dirPath) => {
-  return fs.promises.readdir(dirPath);
+  try {
+    const entries = await fs.promises.readdir(dirPath, { withFileTypes: true });
+
+    const files: string[] = [];
+    const directories: string[] = [];
+
+    for (const entry of entries) {
+      const entryName = entry.name;
+      if (entry.isFile()) {
+        files.push(entryName);
+      } else if (entry.isDirectory()) {
+        directories.push(entryName);
+      }
+    }
+
+    return { files, directories };
+  } catch (error) {
+    console.error("Error reading directory:", error);
+  }
 });
 
 ipcMain.handle("select-directory", async () => {

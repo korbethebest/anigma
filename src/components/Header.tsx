@@ -2,22 +2,21 @@ import { useEffect, useState } from "react";
 import style from "./Header.module.css";
 
 interface HeaderProps {
-  onDirectoryChange: (files: string[]) => void;
+  onDirectoryChange: (files: string[], directories: string[]) => void;
 }
 
 export default function Header({ onDirectoryChange }: HeaderProps) {
   const [, setRootDirectoryPath] = useState("");
   const [displayDirectoryPath, setDisplayDirectoryPath] = useState("");
-  const [, setFiles] = useState<string[]>([]);
 
   useEffect(() => {
     const fetchDocumentsPath = async () => {
       const documentsPath = await window.electron.getDocumentsPath();
       setRootDirectoryPath(documentsPath);
       setDisplayDirectoryPath(documentsPath);
-      const directoryFiles = await window.electron.readDirectory(documentsPath);
-      setFiles(directoryFiles);
-      onDirectoryChange(directoryFiles);
+      const { files: fetchedFiles, directories: fetchedDirectories } =
+        await window.electron.readDirectory(documentsPath);
+      onDirectoryChange(fetchedFiles, fetchedDirectories);
     };
     fetchDocumentsPath();
   }, []);
@@ -27,9 +26,9 @@ export default function Header({ onDirectoryChange }: HeaderProps) {
     if (selectedPath) {
       setRootDirectoryPath(selectedPath);
       setDisplayDirectoryPath(selectedPath);
-      const directoryFiles = await window.electron.readDirectory(selectedPath);
-      setFiles(directoryFiles);
-      onDirectoryChange(directoryFiles);
+      const { files: fetchedFiles, directories: fetchedDirectories } =
+        await window.electron.readDirectory(selectedPath);
+      onDirectoryChange(fetchedFiles, fetchedDirectories);
     }
   };
 
