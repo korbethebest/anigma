@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Header from "./components/Header";
 import { FileInfo } from "./types/types";
+import style from "./App.module.css";
 
 function App() {
   const [files, setFiles] = useState<FileInfo[]>([]);
@@ -17,24 +18,39 @@ function App() {
   return (
     <>
       <Header onDirectoryChange={handleDirectoryChange} />
-      <main>
-        {files.length && (
-          <div>
-            <h3>Directories:</h3>
-            <ul>
-              {directories.map((directory, index) => (
-                <li key={index}>{directory}</li>
-              ))}
-            </ul>
-            <h3>Files:</h3>
-            <ul>
-              {files.map((file, index) => (
-                <li key={index}>
-                  <img src={file.icon} alt={file.name} width={32} height={32} />
-                  {file.name}
-                </li>
-              ))}
-            </ul>
+      <main className={style.main}>
+        {(files.length || directories.length) && (
+          <div className={style.gap20}>
+            <div>
+              <h3>Directories:</h3>
+              <div className={style.container}>
+                {directories.map((directory, index) => (
+                  <div key={index} className={style.row}>
+                    <img
+                      src="/folder-regular.png"
+                      alt={directory}
+                      className={style.icon}
+                    />
+                    {directory}
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div>
+              <h3>Files:</h3>
+              <div className={style.container}>
+                {files.map((file, index) => (
+                  <div key={index} className={style.row}>
+                    <img
+                      src={file.icon}
+                      alt={file.name}
+                      className={style.icon}
+                    />
+                    {file.name}
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         )}
       </main>
