@@ -1,0 +1,17 @@
+.header {
+  width: "100%";
+  min-height: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 20px 15px;
+}
+
+.icon {
+  width: 24px;
+  height: 24px;
+}
+
+.title {
+  font-size: 48px;
+}
