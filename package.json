@@ -2,7 +2,7 @@
   "name": "anigma",
   "private": true,
   "version": "0.0.0",
-  "type": "module",
+  "type": "commonjs",
   "homepage": "./",
   "scripts": {
     "build": "cross-env NODE_ENV=production tsc && vite build",
@@ -11,8 +11,9 @@
     "preview": "vite preview",
     "dev": "vite",
     "build-dev": "cross-env NODE_ENV=development tsc && vite build",
+    "build-dev:preload": "cross-env NODE_ENV=development vite build -c vite.config.preload.ts",
     "build-dev:electron": "cross-env NODE_ENV=development vite build -c vite.config.electron.ts",
-    "dev:electron": "cross-env NODE_ENV=development electron dist/main.js"
+    "dev:electron": "cross-env NODE_ENV=development electron dist/main.mjs"
   },
   "dependencies": {
     "react": "^18.2.0",

@@ -1,6 +1,8 @@
-import { app, BrowserWindow } from "electron";
+import { app, BrowserWindow, ipcMain, dialog } from "electron";
 import * as path from "path";
+import * as os from "os";
 import * as url from "url";
+import * as fs from "fs";
 
 const BASE_URL = "http://localhost:5173";
 const env = process.env.NODE_ENV || "development";
@@ -17,6 +19,7 @@ function createMainWindow() {
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: true,
+      preload: path.join(__dirname, "preload.mjs"),
     },
   });
 
@@ -28,7 +31,6 @@ function createMainWindow() {
   }
   mainWindow.on("closed", () => (mainWindow = null));
 }
-
 app.whenReady().then(createMainWindow);
 
 app.on("window-all-closed", () => {
@@ -40,5 +42,24 @@ app.on("window-all-closed", () => {
 app.on("activate", () => {
   if (mainWindow == null) {
     createMainWindow();
+  }
+});
+
+ipcMain.handle("get-documents-path", () => {
+  return path.join(os.homedir(), "Documents");
+});
+
+ipcMain.handle("read-directory", async (event, dirPath) => {
+  return fs.promises.readdir(dirPath);
+});
+
+ipcMain.handle("select-directory", async () => {
+  const result = await dialog.showOpenDialog({
+    properties: ["openDirectory"],
+  });
+  if (result.canceled) {
+    return null;
+  } else {
+    return result.filePaths[0];
   }
 });
