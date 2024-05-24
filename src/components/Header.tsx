@@ -21,7 +21,7 @@ export default function Header({ onDirectoryChange }: HeaderProps) {
         fetchedFiles.map(async (file) => {
           const fileName = await window.electron.getName(file);
           const fileIcon = await window.electron.getFileIcon(file);
-          return { name: fileName, icon: fileIcon };
+          return { name: fileName, path: file, icon: fileIcon };
         })
       );
       const directoriesWithName = await Promise.all(
@@ -47,7 +47,7 @@ export default function Header({ onDirectoryChange }: HeaderProps) {
         fetchedFiles.map(async (file) => {
           const fileName = await window.electron.getName(file);
           const fileIcon = await window.electron.getFileIcon(file);
-          return { name: fileName, icon: fileIcon };
+          return { name: fileName, path: file, icon: fileIcon };
         })
       );
       const directoriesWithName = await Promise.all(

@@ -16,4 +16,7 @@ contextBridge.exposeInMainWorld("electron", {
   getName: (filePath: string) => ipcRenderer.invoke("get-name", filePath),
   getFileIcon: (filePath: string) =>
     ipcRenderer.invoke("get-file-icon", filePath),
+  readFile: (filePath: string) => ipcRenderer.invoke("read-file", filePath),
+  openImageWindow: (imageData: string) =>
+    ipcRenderer.send("open-image-window", imageData),
 });

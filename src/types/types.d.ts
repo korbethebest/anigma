@@ -13,6 +13,8 @@ declare global {
     selectDirectory: () => Promise<string | null>;
     getName: (filePath: string) => Promise<string>;
     getFileIcon: (filePath: string) => Promise<string>;
+    readFile: (filePath: string) => Promise<any>;
+    openImageWindow: (imageData: string) => void;
   }
   interface Window {
     electron: ElectronAPI;
@@ -21,5 +23,6 @@ declare global {
 
 export interface FileInfo {
   name: string;
+  path: string;
   icon: string;
 }

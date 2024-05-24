@@ -15,6 +15,29 @@ function App() {
     setDirectories(newDirectories);
   };
 
+  const handleFileDoubleClick = async (filePath: string) => {
+    const readableImageExtensionCandidates = [
+      ".png",
+      ".jpg",
+      ".jpeg",
+      ".gif",
+      ".webp",
+    ];
+    let isReadable = false;
+    for (const candidate of readableImageExtensionCandidates) {
+      if (filePath.endsWith(candidate)) {
+        isReadable = true;
+      }
+    }
+    if (!isReadable) {
+      alert(`Failed to read file: ${filePath}!`);
+      return;
+    }
+
+    const data = await window.electron.readFile(filePath);
+    window.electron.openImageWindow(data);
+  };
+
   return (
     <>
       <Header onDirectoryChange={handleDirectoryChange} />
@@ -40,7 +63,11 @@ function App() {
               <h3>Files:</h3>
               <div className={style.container}>
                 {files.map((file, index) => (
-                  <div key={index} className={style.row}>
+                  <div
+                    key={index}
+                    className={style.row}
+                    onDoubleClick={() => handleFileDoubleClick(file.path)}
+                  >
                     <img
                       src={file.icon}
                       alt={file.name}

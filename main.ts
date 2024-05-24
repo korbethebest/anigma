@@ -123,3 +123,46 @@ ipcMain.handle("get-file-icon", async (event, filePath) => {
   }
   return defaultIconPath;
 });
+
+ipcMain.handle("read-file", async (event, filePath) => {
+  try {
+    const data = await fs.promises.readFile(filePath, "base64");
+    return data;
+  } catch (error) {
+    console.error("Error reading file:", error);
+    throw error;
+  }
+});
+
+ipcMain.on("open-image-window", (event, imageData) => {
+  const imageWindow = new BrowserWindow({
+    width: 1000,
+    height: 750,
+  });
+
+  imageWindow.loadURL(`data:text/html;charset=utf-8,
+    <html>
+      <head>
+        <style>
+          body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: black;
+          }
+          img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+          }
+        </style>
+      </head>
+      <body>
+        <img src="data:image/png;base64,${imageData}" />
+      </body>
+    </html>`);
+});
