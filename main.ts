@@ -5,7 +5,7 @@ import * as url from "url";
 import * as fs from "fs";
 
 const BASE_URL = "http://localhost:5173";
-const env = process.env.NODE_ENV || "development";
+const env = process.env;
 
 const __filename = url.fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -23,9 +23,8 @@ function createMainWindow() {
     },
   });
 
-  if (env === "development") {
+  if (env.NODE_DEV === "development") {
     mainWindow.loadURL(BASE_URL);
-    mainWindow.webContents.openDevTools({ mode: "detach" });
   } else {
     mainWindow.loadFile(path.join(__dirname, "./index.html")); //
   }
@@ -100,7 +99,7 @@ ipcMain.handle("get-name", async (event, filePath) => {
 
 ipcMain.handle("get-file-icon", async (event, filePath) => {
   const ext = await path.extname(filePath).toLowerCase();
-  let defaultIconPath = "/file-regular.png";
+  let defaultIconPath = "./file-regular.png";
   const audioExtensions = [".mp3", ".wav", ".aac", ".flac"];
   const videoExtensions = [
     ".mp4",
@@ -122,15 +121,15 @@ ipcMain.handle("get-file-icon", async (event, filePath) => {
   ];
 
   if (ext === ".txt") {
-    defaultIconPath = "/file-lines-regular.png";
+    defaultIconPath = "./file-lines-regular.png";
   } else if (ext === ".pdf") {
-    defaultIconPath = "/file-pdf-regular.png";
+    defaultIconPath = "./file-pdf-regular.png";
   } else if (audioExtensions.includes(ext)) {
-    defaultIconPath = "/file-audio-regular.png";
+    defaultIconPath = "./file-audio-regular.png";
   } else if (videoExtensions.includes(ext)) {
-    defaultIconPath = "/file-video-regular.png";
+    defaultIconPath = "./file-video-regular.png";
   } else if (imageExtensions.includes(ext)) {
-    defaultIconPath = "/file-image-regular.png";
+    defaultIconPath = "./file-image-regular.png";
   }
   return defaultIconPath;
 });

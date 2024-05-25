@@ -6,7 +6,7 @@
   "main": "dist/main.mjs",
   "build": {
     "appId": "com.dohyunlee.fileexplorer",
-    "productName": "AnigmaFileExplorer",
+    "productName": "Anigma File Explorer",
     "directories": {
       "buildResources": "dist",
       "output": "output"
@@ -15,12 +15,14 @@
       "./dist/**/*"
     ],
     "mac": {
+      "icon": "dist/anigma.icns",
       "category": "public.app-category.utilities",
       "target": [
         "dmg"
       ]
     },
     "win": {
+      "icon": "dist/anigma.ico",
       "target": [
         "nsis",
         "zip"
@@ -33,17 +35,18 @@
   },
   "homepage": "./",
   "scripts": {
-    "build": "cross-env NODE_ENV=production tsc && vite build",
-    "build:preload": "cross-env NODE_ENV=production vite build -c vite.config.preload.ts",
-    "build:electron": "cross-env NODE_ENV=production vite build -c vite.config.electron.ts",
-    "package": "electron-builder",
+    "build": "cross-env NODE_ENV=production tsc && vite build --mode prod",
+    "build:preload": "cross-env NODE_ENV=production tsc && vite build -c vite.config.preload.ts --mode prod",
+    "build:electron": "cross-env NODE_ENV=production tsc && vite build -c vite.config.electron.ts --mode prod",
+    "package-mac": "electron-builder -- -m",
+    "package-win": "electron-builder -- -w",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "dev": "vite",
-    "build-dev": "cross-env NODE_ENV=development tsc && vite build",
-    "build-dev:preload": "cross-env NODE_ENV=development vite build -c vite.config.preload.ts",
-    "build-dev:electron": "cross-env NODE_ENV=development vite build -c vite.config.electron.ts",
-    "dev:electron": "cross-env NODE_ENV=development electron dist/main.mjs"
+    "build-dev": "cross-env NODE_ENV=development tsc && vite build --mode dev",
+    "build-dev:preload": "cross-env NODE_ENV=development tsc && vite build -c vite.config.preload.ts --mode dev",
+    "build-dev:electron": "cross-env NODE_ENV=development tsc && vite build -c vite.config.electron.ts --mode dev",
+    "dev:electron": "electron dist/main.mjs"
   },
   "dependencies": {
     "react": "^18.2.0",

@@ -95,7 +95,7 @@ export default function Main({
                   }
                 >
                   <img
-                    src="/folder-regular.png"
+                    src="./folder-regular.png"
                     alt={directory.name}
                     className={style.icon}
                   />
