@@ -3,10 +3,40 @@
   "private": true,
   "version": "0.0.0",
   "type": "commonjs",
+  "main": "dist/main.mjs",
+  "build": {
+    "appId": "com.dohyunlee.fileexplorer",
+    "productName": "AnigmaFileExplorer",
+    "directories": {
+      "buildResources": "dist",
+      "output": "output"
+    },
+    "files": [
+      "./dist/**/*"
+    ],
+    "mac": {
+      "category": "public.app-category.utilities",
+      "target": [
+        "dmg"
+      ]
+    },
+    "win": {
+      "target": [
+        "nsis",
+        "zip"
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    }
+  },
   "homepage": "./",
   "scripts": {
     "build": "cross-env NODE_ENV=production tsc && vite build",
-    "build:electron": "cross-env NODE_ENV=production tsc && vite build",
+    "build:preload": "cross-env NODE_ENV=production vite build -c vite.config.preload.ts",
+    "build:electron": "cross-env NODE_ENV=production vite build -c vite.config.electron.ts",
+    "package": "electron-builder",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "dev": "vite",
@@ -27,6 +57,7 @@
     "@vitejs/plugin-react": "^4.2.1",
     "cross-env": "^7.0.3",
     "electron": "^30.0.6",
+    "electron-builder": "^24.13.3",
     "eslint": "^8.57.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.6",
