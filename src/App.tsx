@@ -15,27 +15,40 @@ function App() {
     setDirectories(newDirectories);
   };
 
-  const handleFileDoubleClick = async (filePath: string) => {
-    const readableImageExtensionCandidates = [
-      ".png",
-      ".jpg",
-      ".jpeg",
-      ".gif",
-      ".webp",
-    ];
-    let isReadable = false;
-    for (const candidate of readableImageExtensionCandidates) {
-      if (filePath.endsWith(candidate)) {
-        isReadable = true;
+  const checkExtension = (filePath: string) => {
+    const readableExtensions = {
+      image: [".png", ".jpg", ".jpeg", ".gif", ".webp"],
+      video: [".mp4", ".webm"],
+      audio: [".mp3", ".wav"],
+      text: [".txt"],
+    };
+
+    for (const [type, extensions] of Object.entries(readableExtensions)) {
+      if (extensions.some((ext) => filePath.endsWith(ext))) {
+        return type;
       }
     }
-    if (!isReadable) {
+
+    return null;
+  };
+
+  const handleFileDoubleClick = async (filePath: string) => {
+    const fileType = checkExtension(filePath);
+    if (!fileType) {
       alert(`Failed to read file: ${filePath}!`);
       return;
     }
 
-    const data = await window.electron.readFile(filePath);
-    window.electron.openImageWindow(data);
+    if (fileType === "text") {
+      window.electron.openTextWindow(filePath);
+    } else {
+      const data = await window.electron.readFile(filePath);
+      fileType === "image"
+        ? window.electron.openImageWindow(data)
+        : fileType === "video"
+        ? window.electron.openVideoWindow(data)
+        : window.electron.openAudioWindow(data);
+    }
   };
 
   return (

@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, dialog, nativeImage } from "electron";
+import { app, BrowserWindow, ipcMain, dialog } from "electron";
 import * as path from "path";
 import * as os from "os";
 import * as url from "url";
@@ -134,10 +134,41 @@ ipcMain.handle("read-file", async (event, filePath) => {
   }
 });
 
+function checkFileSize(base64Data: string) {
+  const base64Length = base64Data.length;
+  const padding = base64Data.endsWith("==")
+    ? 2
+    : base64Data.endsWith("=")
+    ? 1
+    : 0;
+  const byteSize = (base64Length * 3) / 4 - padding;
+
+  const maxByteSize = 2 * 1024 * 1024;
+
+  if (byteSize > maxByteSize) {
+    return false;
+  } else return true;
+}
+
 ipcMain.on("open-image-window", (event, imageData) => {
+  const isReadable = checkFileSize(imageData);
+  if (!isReadable) {
+    dialog.showMessageBox({
+      type: "warning",
+      buttons: ["OK"],
+      title: "File Size Warning",
+      message:
+        "The image file is too large to open. Please select a file smaller than 2MB.",
+    });
+    return;
+  }
+
   const imageWindow = new BrowserWindow({
     width: 1000,
     height: 750,
+    webPreferences: {
+      nodeIntegration: true,
+    },
   });
 
   imageWindow.loadURL(`data:text/html;charset=utf-8,
@@ -165,4 +196,166 @@ ipcMain.on("open-image-window", (event, imageData) => {
         <img src="data:image/png;base64,${imageData}" />
       </body>
     </html>`);
+});
+
+ipcMain.on("open-video-window", (event, videoData) => {
+  const isReadable = checkFileSize(videoData);
+  if (!isReadable) {
+    dialog.showMessageBox({
+      type: "warning",
+      buttons: ["OK"],
+      title: "File Size Warning",
+      message:
+        "The video file is too large to open. Please select a file smaller than 2MB.",
+    });
+    return;
+  }
+
+  const videoWindow = new BrowserWindow({
+    width: 1000,
+    height: 750,
+    webPreferences: {
+      nodeIntegration: true,
+    },
+  });
+
+  videoWindow.loadURL(`data:text/html;charset=utf-8,
+    <html>
+      <head>
+        <style>
+          body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: black;
+          }
+          video {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+          }
+        </style>
+      </head>
+      <body>
+        <video id="videoElement" autoplay controls>
+          Your browser does not support the video tag.
+        </video>
+        <script>
+          function base64ToBlob(base64, mime) {
+            const byteCharacters = atob(base64);
+            const byteNumbers = new Array(byteCharacters.length);
+            for (let i = 0; i < byteCharacters.length; i++) {
+              byteNumbers[i] = byteCharacters.charCodeAt(i);
+            }
+            const byteArray = new Uint8Array(byteNumbers);
+            return new Blob([byteArray], {type: mime});
+          }
+
+          const base64String = "${videoData}";
+          const mimeType = "video/mp4";
+          const blob = base64ToBlob(base64String, mimeType);
+          const blobURL = URL.createObjectURL(blob);
+          const videoElement = document.getElementById('videoElement');
+          videoElement.src = blobURL;
+        </script>
+      </body>
+    </html>`);
+});
+
+ipcMain.on("open-audio-window", (event, audioData) => {
+  const isReadable = checkFileSize(audioData);
+  if (!isReadable) {
+    dialog.showMessageBox({
+      type: "warning",
+      buttons: ["OK"],
+      title: "File Size Warning",
+      message:
+        "The audio file is too large to open. Please select a file smaller than 2MB.",
+    });
+    return;
+  }
+
+  const audioWindow = new BrowserWindow({
+    width: 400,
+    height: 200,
+    webPreferences: {
+      nodeIntegration: true,
+    },
+  });
+
+  audioWindow.loadURL(`data:text/html;charset=utf-8,
+    <html>
+      <head>
+        <style>
+          body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: black;
+          }
+          audio {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+          }
+        </style>
+      </head>
+      <body>
+        <audio controls>
+          <source src="data:audio/mp3;base64,${audioData}" type="audio/mp3">
+          Your browser does not support the audio tag.
+        </audio>
+      </body>
+    </html>`);
+});
+
+ipcMain.on("open-text-window", async (event, filePath) => {
+  try {
+    const textContent = await fs.promises.readFile(filePath, "utf-8");
+
+    const textWindow = new BrowserWindow({
+      width: 800,
+      height: 600,
+      webPreferences: {
+        nodeIntegration: true,
+      },
+    });
+
+    textWindow.loadURL(`data:text/html;charset=utf-8,
+      <html>
+        <head>
+          <style>
+            body, html {
+              margin: 0;
+              padding: 20px;
+              width: 100%;
+              height: 100%;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              background-color: white;
+              font-family: Arial, sans-serif;
+            }
+            pre {
+              white-space: pre-wrap;
+              word-wrap: break-word;
+            }
+          </style>
+        </head>
+        <body>
+          <pre id="textContent">${textContent}</pre>
+        </body>
+      </html>`);
+  } catch (error) {
+    dialog.showErrorBox("File Read Error", "Failed to read the text file.");
+    console.error(error);
+  }
 });

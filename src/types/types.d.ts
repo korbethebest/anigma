@@ -15,6 +15,9 @@ declare global {
     getFileIcon: (filePath: string) => Promise<string>;
     readFile: (filePath: string) => Promise<any>;
     openImageWindow: (imageData: string) => void;
+    openVideoWindow: (videoData: string) => void;
+    openAudioWindow: (audioData: string) => void;
+    openTextWindow: (filePath: string) => void;
   }
   interface Window {
     electron: ElectronAPI;

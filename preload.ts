@@ -1,4 +1,4 @@
-import { contextBridge, ipcRenderer } from "electron";
+import { IpcRendererEvent, contextBridge, ipcRenderer } from "electron";
 
 contextBridge.exposeInMainWorld("electron", {
   ipcRenderer: {
@@ -19,4 +19,10 @@ contextBridge.exposeInMainWorld("electron", {
   readFile: (filePath: string) => ipcRenderer.invoke("read-file", filePath),
   openImageWindow: (imageData: string) =>
     ipcRenderer.send("open-image-window", imageData),
+  openVideoWindow: (videoData: string): void =>
+    ipcRenderer.send("open-video-window", videoData),
+  openAudioWindow: (audioData: string): void =>
+    ipcRenderer.send("open-audio-window", audioData),
+  openTextWindow: (filePath: string) =>
+    ipcRenderer.send("open-text-window", filePath),
 });
