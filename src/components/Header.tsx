@@ -10,8 +10,16 @@ export default function Header({
   onDirectoryChange,
   currentDirectory,
 }: HeaderProps) {
-  const [, setRootDirectoryPath] = useState("");
+  const [rootDirectoryPath, setRootDirectoryPath] = useState("");
   const [displayDirectoryPath, setDisplayDirectoryPath] = useState("");
+
+  useEffect(() => {
+    const setDocumentsPathAsRootDirectory = async () => {
+      const documentsPath = await window.electron.getDocumentsPath();
+      setRootDirectoryPath(documentsPath);
+    };
+    setDocumentsPathAsRootDirectory();
+  }, []);
 
   useEffect(() => {
     setDisplayDirectoryPath(currentDirectory);
@@ -26,9 +34,25 @@ export default function Header({
     }
   };
 
+  const handleGoBack = () => {
+    console.log(rootDirectoryPath, displayDirectoryPath);
+    if (rootDirectoryPath === displayDirectoryPath)
+      return alert(
+        "You cannot go upper than a root directory!\nYou can reset the root directory by clicking a search button!"
+      );
+    const parentDirectory = displayDirectoryPath.substring(
+      0,
+      currentDirectory.lastIndexOf("/")
+    );
+    if (parentDirectory.startsWith(rootDirectoryPath)) {
+      setDisplayDirectoryPath(parentDirectory);
+      onDirectoryChange(parentDirectory);
+    }
+  };
+
   return (
     <div className={style.header}>
-      <div className={style.icon}>
+      <div className={style.icon} onClick={handleGoBack}>
         <svg
           width="100%"
           height="100%"
