@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import Header from "./components/Header";
+import Header from "./components/Header/Header";
 import { FileInfo, DirectoryInfo } from "./types/types";
 import style from "./App.module.css";
 import { checkExtension } from "./utils/utils";
@@ -29,15 +29,6 @@ function App() {
     setFiles(filesWithName);
     setDirectories(directoriesWithName);
   };
-
-  useEffect(() => {
-    const fetchDocumentsPath = async () => {
-      const documentsPath = await window.electron.getDocumentsPath();
-      setCurrentDirectory(documentsPath);
-      displayFilesAndDirectories(documentsPath);
-    };
-    fetchDocumentsPath();
-  }, []);
 
   useEffect(() => {
     const displayCurrentDirectory = async () => {

@@ -14,11 +14,12 @@ export default function Header({
   const [displayDirectoryPath, setDisplayDirectoryPath] = useState("");
 
   useEffect(() => {
-    const setDocumentsPathAsRootDirectory = async () => {
+    const setDocumentsPathAsInitialRootDirectory = async () => {
       const documentsPath = await window.electron.getDocumentsPath();
       setRootDirectoryPath(documentsPath);
+      onDirectoryChange(documentsPath);
     };
-    setDocumentsPathAsRootDirectory();
+    setDocumentsPathAsInitialRootDirectory();
   }, []);
 
   useEffect(() => {
@@ -29,23 +30,20 @@ export default function Header({
     const selectedPath = await window.electron.selectDirectory();
     if (selectedPath) {
       setRootDirectoryPath(selectedPath);
-      setDisplayDirectoryPath(selectedPath);
       onDirectoryChange(selectedPath);
     }
   };
 
   const handleGoBack = () => {
-    console.log(rootDirectoryPath, displayDirectoryPath);
     if (rootDirectoryPath === displayDirectoryPath)
       return alert(
-        "You cannot go upper than a root directory!\nYou can reset the root directory by clicking a search button!"
+        `You cannot go upper than a root directory!\n(root: ${rootDirectoryPath})\nYou can reset the root directory by clicking a search button!`
       );
     const parentDirectory = displayDirectoryPath.substring(
       0,
       currentDirectory.lastIndexOf("/")
     );
     if (parentDirectory.startsWith(rootDirectoryPath)) {
-      setDisplayDirectoryPath(parentDirectory);
       onDirectoryChange(parentDirectory);
     }
   };
