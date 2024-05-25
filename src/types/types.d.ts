@@ -29,3 +29,8 @@ export interface FileInfo {
   path: string;
   icon: string;
 }
+
+export interface DirectoryInfo {
+  name: string;
+  path: string;
+}

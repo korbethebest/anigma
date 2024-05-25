@@ -53,9 +53,19 @@ ipcMain.handle("read-directory", async (event, dirPath) => {
   try {
     const entries = await fs.promises.readdir(dirPath, { withFileTypes: true });
 
+    if (!entries.length) {
+      dialog.showMessageBox({
+        type: "warning",
+        buttons: ["OK"],
+        title: "Empty directory Warning",
+        message: "No files or subdirectories in the directory!",
+      });
+
+      return;
+    }
+
     const files: string[] = [];
     const directories: string[] = [];
-
     for (const entry of entries) {
       const entryPath = path.join(dirPath, entry.name);
       if (entry.isFile()) {
@@ -65,7 +75,7 @@ ipcMain.handle("read-directory", async (event, dirPath) => {
       }
     }
 
-    return { files, directories };
+    return { files: files, directories: directories };
   } catch (error) {
     console.error("Error reading directory:", error);
   }

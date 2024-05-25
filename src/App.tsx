@@ -1,35 +1,59 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Header from "./components/Header";
-import { FileInfo } from "./types/types";
+import { FileInfo, DirectoryInfo } from "./types/types";
 import style from "./App.module.css";
+import { checkExtension } from "./utils/utils";
 
 function App() {
+  const [currentDirectory, setCurrentDirectory] = useState("");
   const [files, setFiles] = useState<FileInfo[]>([]);
-  const [directories, setDirectories] = useState<string[]>([]);
+  const [directories, setDirectories] = useState<DirectoryInfo[]>([]);
 
-  const handleDirectoryChange = (
-    newFiles: FileInfo[],
-    newDirectories: string[]
-  ) => {
-    setFiles(newFiles);
-    setDirectories(newDirectories);
+  const displayFilesAndDirectories = async (path: string) => {
+    const result = await window.electron.readDirectory(path);
+    if (!result) return;
+    const { files: fetchedFiles, directories: fetchedDirectories } = result;
+    const filesWithName = await Promise.all(
+      fetchedFiles.map(async (file) => {
+        const fileName = await window.electron.getName(file);
+        const fileIcon = await window.electron.getFileIcon(file);
+        return { name: fileName, path: file, icon: fileIcon };
+      })
+    );
+    const directoriesWithName = await Promise.all(
+      fetchedDirectories.map(async (directory) => {
+        const directoryName = await window.electron.getName(directory);
+        return { name: directoryName, path: directory };
+      })
+    );
+    setFiles(filesWithName);
+    setDirectories(directoriesWithName);
   };
 
-  const checkExtension = (filePath: string) => {
-    const readableExtensions = {
-      image: [".png", ".jpg", ".jpeg", ".gif", ".webp"],
-      video: [".mp4", ".webm"],
-      audio: [".mp3", ".wav"],
-      text: [".txt"],
+  useEffect(() => {
+    const fetchDocumentsPath = async () => {
+      const documentsPath = await window.electron.getDocumentsPath();
+      setCurrentDirectory(documentsPath);
+      displayFilesAndDirectories(documentsPath);
     };
+    fetchDocumentsPath();
+  }, []);
 
-    for (const [type, extensions] of Object.entries(readableExtensions)) {
-      if (extensions.some((ext) => filePath.endsWith(ext))) {
-        return type;
-      }
-    }
+  useEffect(() => {
+    const displayCurrentDirectory = async () => {
+      await displayFilesAndDirectories(currentDirectory);
+    };
+    displayCurrentDirectory();
+  }, [currentDirectory]);
 
-    return null;
+  const handleCurrentDirectoryChange = (directory: string) => {
+    setCurrentDirectory(directory);
+  };
+
+  const handleDirectoryDoubleClick = async (directoryPath: string) => {
+    const result = await window.electron.readDirectory(directoryPath);
+    if (!result.files.length && !result.directories.length) return;
+    setCurrentDirectory(directoryPath);
   };
 
   const handleFileDoubleClick = async (filePath: string) => {
@@ -53,7 +77,10 @@ function App() {
 
   return (
     <>
-      <Header onDirectoryChange={handleDirectoryChange} />
+      <Header
+        onDirectoryChange={handleCurrentDirectoryChange}
+        currentDirectory={currentDirectory || "Loading..."}
+      />
       <main className={style.main}>
         {(files.length || directories.length) && (
           <div className={style.gap20}>
@@ -61,13 +88,19 @@ function App() {
               <h3>Directories:</h3>
               <div className={style.container}>
                 {directories.map((directory, index) => (
-                  <div key={index} className={style.row}>
+                  <div
+                    key={index}
+                    className={style.row}
+                    onDoubleClick={() =>
+                      handleDirectoryDoubleClick(directory.path)
+                    }
+                  >
                     <img
                       src="/folder-regular.png"
-                      alt={directory}
+                      alt={directory.name}
                       className={style.icon}
                     />
-                    {directory}
+                    {directory.name}
                   </div>
                 ))}
               </div>

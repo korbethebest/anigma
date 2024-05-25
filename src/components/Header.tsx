@@ -1,63 +1,28 @@
 import { useEffect, useState } from "react";
 import style from "./Header.module.css";
-import { FileInfo } from "../types/types";
 
 interface HeaderProps {
-  onDirectoryChange: (files: FileInfo[], directories: string[]) => void;
+  onDirectoryChange: (directory: string) => void;
+  currentDirectory: string;
 }
 
-export default function Header({ onDirectoryChange }: HeaderProps) {
+export default function Header({
+  onDirectoryChange,
+  currentDirectory,
+}: HeaderProps) {
   const [, setRootDirectoryPath] = useState("");
   const [displayDirectoryPath, setDisplayDirectoryPath] = useState("");
 
   useEffect(() => {
-    const fetchDocumentsPath = async () => {
-      const documentsPath = await window.electron.getDocumentsPath();
-      setRootDirectoryPath(documentsPath);
-      setDisplayDirectoryPath(documentsPath);
-      const { files: fetchedFiles, directories: fetchedDirectories } =
-        await window.electron.readDirectory(documentsPath);
-      const filesWithName = await Promise.all(
-        fetchedFiles.map(async (file) => {
-          const fileName = await window.electron.getName(file);
-          const fileIcon = await window.electron.getFileIcon(file);
-          return { name: fileName, path: file, icon: fileIcon };
-        })
-      );
-      const directoriesWithName = await Promise.all(
-        fetchedDirectories.map(async (directory) => {
-          const directoryName = await window.electron.getName(directory);
-          return directoryName;
-        })
-      );
-
-      onDirectoryChange(filesWithName, directoriesWithName);
-    };
-    fetchDocumentsPath();
-  }, []);
+    setDisplayDirectoryPath(currentDirectory);
+  }, [currentDirectory]);
 
   const handleSelectDirectory = async () => {
     const selectedPath = await window.electron.selectDirectory();
     if (selectedPath) {
       setRootDirectoryPath(selectedPath);
       setDisplayDirectoryPath(selectedPath);
-      const { files: fetchedFiles, directories: fetchedDirectories } =
-        await window.electron.readDirectory(selectedPath);
-      const filesWithName = await Promise.all(
-        fetchedFiles.map(async (file) => {
-          const fileName = await window.electron.getName(file);
-          const fileIcon = await window.electron.getFileIcon(file);
-          return { name: fileName, path: file, icon: fileIcon };
-        })
-      );
-      const directoriesWithName = await Promise.all(
-        fetchedDirectories.map(async (directory) => {
-          const directoryName = await window.electron.getName(directory);
-          return directoryName;
-        })
-      );
-
-      onDirectoryChange(filesWithName, directoriesWithName);
+      onDirectoryChange(selectedPath);
     }
   };
 
