@@ -9,6 +9,7 @@ contextBridge.exposeInMainWorld("electron", {
       ipcRenderer.on(channel, (event, ...args) => func(...args));
     },
   },
+  getSeparator: () => ipcRenderer.invoke("get-separator"),
   getDocumentsPath: () => ipcRenderer.invoke("get-documents-path"),
   readDirectory: (dirPath: string) =>
     ipcRenderer.invoke("read-directory", dirPath),

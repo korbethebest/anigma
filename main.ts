@@ -44,6 +44,10 @@ app.on("activate", () => {
   }
 });
 
+ipcMain.handle("get-separator", async () => {
+  return path.sep;
+});
+
 ipcMain.handle("get-documents-path", () => {
   return path.join(os.homedir(), "Documents");
 });

@@ -6,6 +6,7 @@ declare global {
       send: (channel: string, data: any) => void;
       on: (channel: string, func: (...args: any[]) => void) => void;
     };
+    getSeparator: () => Promise<string>;
     getDocumentsPath: () => Promise<string>;
     readDirectory: (
       dirPath: string

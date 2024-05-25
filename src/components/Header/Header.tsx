@@ -34,14 +34,15 @@ export default function Header({
     }
   };
 
-  const handleGoBack = () => {
+  const handleGoBack = async () => {
     if (rootDirectoryPath === displayDirectoryPath)
       return alert(
         `You cannot go upper than a root directory!\n(root: ${rootDirectoryPath})\nYou can reset the root directory by clicking a search button!`
       );
+    const separator = await window.electron.getSeparator();
     const parentDirectory = displayDirectoryPath.substring(
       0,
-      currentDirectory.lastIndexOf("/")
+      currentDirectory.lastIndexOf(separator)
     );
     if (parentDirectory.startsWith(rootDirectoryPath)) {
       onDirectoryChange(parentDirectory);
