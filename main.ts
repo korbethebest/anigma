@@ -78,6 +78,7 @@ ipcMain.handle("read-directory", async (event, dirPath) => {
     return { files: files, directories: directories };
   } catch (error) {
     console.error("Error reading directory:", error);
+    return { files: [], directories: [] };
   }
 });
 
