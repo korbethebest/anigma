@@ -42,6 +42,7 @@
     "build": "cross-env NODE_ENV=production tsc && vite build --mode prod",
     "build:preload": "cross-env NODE_ENV=production tsc && vite build -c vite.config.preload.ts --mode prod",
     "build:electron": "cross-env NODE_ENV=production tsc && vite build -c vite.config.electron.ts --mode prod",
+    "build:prod": "npm run build && npm run build:preload && npm run build:electron",
     "package-win": "cross-env NODE_ENV=production electron-builder --win",
     "package-mac": "cross-env NODE_ENV=production electron-builder --mac",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
@@ -50,6 +51,7 @@
     "build-dev": "cross-env NODE_ENV=development tsc && vite build --mode dev",
     "build-dev:preload": "cross-env NODE_ENV=development tsc && vite build -c vite.config.preload.ts --mode dev",
     "build-dev:electron": "cross-env NODE_ENV=development tsc && vite build -c vite.config.electron.ts --mode dev",
+    "build:dev": "npm run build-dev && npm run build-dev:preload && npm run build-dev:electron",
     "dev:electron": "electron dist/main.mjs"
   },
   "dependencies": {

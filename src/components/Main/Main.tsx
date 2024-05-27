@@ -84,7 +84,7 @@ export default function Main({
       {(files.length || directories.length) && (
         <div className={style.gap20}>
           <div>
-            <h3>Directories:</h3>
+            <div className={style.title}>Directories:</div>
             <div className={style.container}>
               {directories.map((directory, index) => (
                 <div
@@ -95,7 +95,7 @@ export default function Main({
                   }
                 >
                   <img
-                    src="./folder-regular.png"
+                    src="./FolderSimple.png"
                     alt={directory.name}
                     className={style.icon}
                   />
@@ -105,7 +105,7 @@ export default function Main({
             </div>
           </div>
           <div>
-            <h3>Files:</h3>
+            <div className={style.title}>Files:</div>
             <div className={style.container}>
               {files.map((file, index) => (
                 <div

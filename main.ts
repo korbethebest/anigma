@@ -103,7 +103,7 @@ ipcMain.handle("get-name", async (event, filePath) => {
 
 ipcMain.handle("get-file-icon", async (event, filePath) => {
   const ext = await path.extname(filePath).toLowerCase();
-  let defaultIconPath = "./file-regular.png";
+  let defaultIconPath = "./File.png";
   const audioExtensions = [".mp3", ".wav", ".aac", ".flac"];
   const videoExtensions = [
     ".mp4",
@@ -125,15 +125,13 @@ ipcMain.handle("get-file-icon", async (event, filePath) => {
   ];
 
   if (ext === ".txt") {
-    defaultIconPath = "./file-lines-regular.png";
-  } else if (ext === ".pdf") {
-    defaultIconPath = "./file-pdf-regular.png";
+    defaultIconPath = "./FileText.png";
   } else if (audioExtensions.includes(ext)) {
-    defaultIconPath = "./file-audio-regular.png";
+    defaultIconPath = "./FileAudio.png";
   } else if (videoExtensions.includes(ext)) {
-    defaultIconPath = "./file-video-regular.png";
+    defaultIconPath = "./FileVideo.png";
   } else if (imageExtensions.includes(ext)) {
-    defaultIconPath = "./file-image-regular.png";
+    defaultIconPath = "./FileImage.png";
   }
   return defaultIconPath;
 });
