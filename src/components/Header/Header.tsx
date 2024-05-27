@@ -35,10 +35,6 @@ export default function Header({
   };
 
   const handleGoBack = async () => {
-    if (rootDirectoryPath === displayDirectoryPath)
-      return alert(
-        `You cannot go upper than a root directory!\n(root: ${rootDirectoryPath})\nYou can reset the root directory by clicking a search button!`
-      );
     const separator = await window.electron.getSeparator();
     const parentDirectory = displayDirectoryPath.substring(
       0,
@@ -51,16 +47,20 @@ export default function Header({
 
   return (
     <div className={style.header}>
-      <div className={style.icon} onClick={handleGoBack}>
-        <svg
-          width="100%"
-          height="100%"
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 320 512"
-        >
-          <path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l192 192c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L77.3 256 246.6 86.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-192 192z" />
-        </svg>
-      </div>
+      {rootDirectoryPath === displayDirectoryPath ? (
+        <div className={style.blank} />
+      ) : (
+        <div className={style.icon} onClick={handleGoBack}>
+          <svg
+            width="100%"
+            height="100%"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 320 512"
+          >
+            <path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l192 192c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L77.3 256 246.6 86.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-192 192z" />
+          </svg>
+        </div>
+      )}
       <div className={style.title}>
         {displayDirectoryPath || "NOT SELECTED"}
       </div>
