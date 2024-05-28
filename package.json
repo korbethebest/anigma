@@ -1,5 +1,7 @@
 {
   "name": "anigma",
+  "description": "A user-friendly local file explorer that allows users to browse and view files.",
+  "author": "Dohyun Lee",
   "private": true,
   "version": "0.0.0",
   "type": "commonjs",
