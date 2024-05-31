@@ -1,8 +1,8 @@
 import { app, BrowserWindow, ipcMain, dialog } from "electron";
-import { dirname, join, sep, basename, extname } from "path";
-import { homedir } from "os";
-import { fileURLToPath } from "url";
-import { promises } from "fs";
+import { dirname, join, sep, basename, extname } from "node:path";
+import { homedir } from "node:os";
+import { fileURLToPath } from "node:url";
+import { promises } from "node:fs";
 
 const BASE_URL = "http://localhost:5173";
 const env = process.env;
