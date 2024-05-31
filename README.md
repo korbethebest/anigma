@@ -50,7 +50,8 @@ to navigate through directories and explore files with minimal effort.
 4. **Directories**
 
 - It shows the subdirectories in the current directory.
-- Double-clicking a subdirectory will navigate to that subdirectory, allowing you to view its files and subdirectories.
+- Double-clicking a subdirectory will navigate to that subdirectory,  
+  allowing you to view its files and subdirectories.
 - If the selected subdirectory contains no files or subdirectories,  
   a warning message will appear, preventing access.
 
@@ -112,6 +113,7 @@ npm install
 1. Testing the application locally
 
 ```bash
+npm run dev
 npm run build:dev
 npm run dev:electron
 ```

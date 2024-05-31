@@ -1,14 +1,14 @@
 import { app, BrowserWindow, ipcMain, dialog } from "electron";
-import * as path from "path";
-import * as os from "os";
-import * as url from "url";
-import * as fs from "fs";
+import { dirname, join, sep, basename, extname } from "path";
+import { homedir } from "os";
+import { fileURLToPath } from "url";
+import { promises } from "fs";
 
 const BASE_URL = "http://localhost:5173";
 const env = process.env;
 
-const __filename = url.fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 let mainWindow: BrowserWindow | null;
 
@@ -19,14 +19,14 @@ function createMainWindow() {
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: true,
-      preload: path.join(__dirname, "preload.mjs"),
+      preload: join(__dirname, "preload.mjs"),
     },
   });
 
   if (env.NODE_DEV === "development") {
     mainWindow.loadURL(BASE_URL);
   } else {
-    mainWindow.loadFile(path.join(__dirname, "./index.html")); //
+    mainWindow.loadFile(join(__dirname, "./index.html")); //
   }
   mainWindow.on("closed", () => (mainWindow = null));
 }
@@ -45,16 +45,16 @@ app.on("activate", () => {
 });
 
 ipcMain.handle("get-separator", async () => {
-  return path.sep;
+  return sep;
 });
 
 ipcMain.handle("get-documents-path", () => {
-  return path.join(os.homedir(), "Documents");
+  return join(homedir(), "Documents");
 });
 
 ipcMain.handle("read-directory", async (event, dirPath) => {
   try {
-    const entries = await fs.promises.readdir(dirPath, { withFileTypes: true });
+    const entries = await promises.readdir(dirPath, { withFileTypes: true });
 
     if (!entries.length) {
       dialog.showMessageBox({
@@ -70,7 +70,7 @@ ipcMain.handle("read-directory", async (event, dirPath) => {
     const files: string[] = [];
     const directories: string[] = [];
     for (const entry of entries) {
-      const entryPath = path.join(dirPath, entry.name);
+      const entryPath = join(dirPath, entry.name);
       if (entry.isFile()) {
         files.push(entryPath);
       } else if (entry.isDirectory()) {
@@ -97,12 +97,12 @@ ipcMain.handle("select-directory", async () => {
 });
 
 ipcMain.handle("get-name", async (event, filePath) => {
-  const name = await path.basename(filePath);
+  const name = await basename(filePath);
   return name;
 });
 
 ipcMain.handle("get-file-icon", async (event, filePath) => {
-  const ext = await path.extname(filePath).toLowerCase();
+  const ext = await extname(filePath).toLowerCase();
   let defaultIconPath = "./File.png";
   const audioExtensions = [".mp3", ".wav", ".aac", ".flac"];
   const videoExtensions = [
@@ -138,7 +138,7 @@ ipcMain.handle("get-file-icon", async (event, filePath) => {
 
 ipcMain.handle("read-file", async (event, filePath) => {
   try {
-    const data = await fs.promises.readFile(filePath, "base64");
+    const data = await promises.readFile(filePath, "base64");
     return data;
   } catch (error) {
     console.error("Error reading file:", error);
@@ -331,7 +331,7 @@ ipcMain.on("open-audio-window", (event, audioData) => {
 
 ipcMain.on("open-text-window", async (event, filePath) => {
   try {
-    const textContent = await fs.promises.readFile(filePath, "utf-8");
+    const textContent = await promises.readFile(filePath, "utf-8");
 
     const textWindow = new BrowserWindow({
       width: 800,
