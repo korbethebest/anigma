@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { DirectoryInfo, FileInfo } from "../../types/types";
 import { checkExtension } from "../../utils/utils";
 import style from "./Main.module.css";
@@ -20,6 +20,8 @@ export default function Main({
   setFiles,
   setDirectories,
 }: MainProps) {
+  const [loading, setLoading] = useState(true);
+
   const displayFilesAndDirectories = async (path: string) => {
     const result = await window.electron.readDirectory(path);
     if (!result) return;
@@ -48,10 +50,12 @@ export default function Main({
   };
 
   useEffect(() => {
+    setLoading(true);
     const displayCurrentDirectory = async () => {
       await displayFilesAndDirectories(currentDirectory);
     };
     displayCurrentDirectory();
+    setLoading(false);
   }, [currentDirectory]);
 
   const handleDirectoryDoubleClick = async (directoryPath: string) => {
@@ -81,7 +85,9 @@ export default function Main({
 
   return (
     <main className={style.main}>
-      {(files.length || directories.length) && (
+      {loading ? (
+        <div className={style.title}>Loading...</div>
+      ) : files.length || directories.length ? (
         <div className={style.gap20}>
           <div>
             <div className={style.title}>Directories:</div>
@@ -119,6 +125,10 @@ export default function Main({
               ))}
             </div>
           </div>
+        </div>
+      ) : (
+        <div className={style.title}>
+          Neither file nor subdirectory is found!
         </div>
       )}
     </main>
