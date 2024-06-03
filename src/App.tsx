@@ -1,37 +1,39 @@
 import { useState } from "react";
-import { FileInfo, DirectoryInfo } from "./types/types";
+import { Info, Criteria } from "./types/types";
 import Header from "./components/Header/Header";
 import FilterAndSort from "./components/FilterAndSort/FilterAndSort";
 import Main from "./components/Main/Main";
+import { sortByCriteria } from "./utils/utils";
 
 function App() {
   const [currentDirectory, setCurrentDirectory] = useState("");
-  const [files, setFiles] = useState<FileInfo[]>([]);
-  const [directories, setDirectories] = useState<DirectoryInfo[]>([]);
+  const [files, setFiles] = useState<Info[]>([]);
+  const [directories, setDirectories] = useState<Info[]>([]);
   const [searchTarget, setSearchTarget] = useState("");
+  const [sortCriteria, setSortCriteria] = useState<keyof Criteria>("name");
 
   const handleCurrentDirectoryChange = (directory: string) => {
     setCurrentDirectory(directory);
   };
 
   const filteredFiles = searchTarget.length
-    ? files.filter((file) =>
+    ? sortByCriteria(files, sortCriteria).filter((file) =>
         file.name
           .trim()
           .toLowerCase()
           .normalize()
           .includes(searchTarget.trim().toLowerCase().normalize())
       )
-    : files;
+    : sortByCriteria(files, sortCriteria);
   const filteredDirectories = searchTarget.length
-    ? directories.filter((directory) =>
+    ? sortByCriteria(directories, sortCriteria).filter((directory) =>
         directory.name
           .trim()
           .toLowerCase()
           .normalize()
           .includes(searchTarget.trim().toLowerCase().normalize())
       )
-    : directories;
+    : sortByCriteria(directories, sortCriteria);
 
   return (
     <>
@@ -42,6 +44,8 @@ function App() {
       <FilterAndSort
         searchTarget={searchTarget}
         setSearchTarget={setSearchTarget}
+        sortCriteria={sortCriteria}
+        setSortCriteria={setSortCriteria}
       />
       <Main
         currentDirectory={currentDirectory}

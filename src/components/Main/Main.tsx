@@ -1,15 +1,15 @@
 import { useState, useEffect } from "react";
-import { DirectoryInfo, FileInfo } from "../../types/types";
+import { Info } from "../../types/types";
 import { checkExtension } from "../../utils/utils";
 import style from "./Main.module.css";
 
 interface MainProps {
   currentDirectory: string;
-  files: FileInfo[];
-  directories: DirectoryInfo[];
+  files: Info[];
+  directories: Info[];
   setCurrentDirectory: React.Dispatch<React.SetStateAction<string>>;
-  setFiles: React.Dispatch<React.SetStateAction<FileInfo[]>>;
-  setDirectories: React.Dispatch<React.SetStateAction<DirectoryInfo[]>>;
+  setFiles: React.Dispatch<React.SetStateAction<Info[]>>;
+  setDirectories: React.Dispatch<React.SetStateAction<Info[]>>;
 }
 
 export default function Main({
@@ -25,28 +25,9 @@ export default function Main({
   const displayFilesAndDirectories = async (path: string) => {
     const result = await window.electron.readDirectory(path);
     if (!result) return;
-    const { files: fetchedFiles, directories: fetchedDirectories } = result;
-    let filesWithName: FileInfo[] = [];
-    let directoriesWithName: DirectoryInfo[] = [];
-    if (fetchedFiles) {
-      filesWithName = await Promise.all(
-        fetchedFiles.map(async (file) => {
-          const fileName = await window.electron.getName(file);
-          const fileIcon = await window.electron.getFileIcon(file);
-          return { name: fileName, path: file, icon: fileIcon };
-        })
-      );
-    }
-    if (fetchedDirectories) {
-      directoriesWithName = await Promise.all(
-        fetchedDirectories.map(async (directory) => {
-          const directoryName = await window.electron.getName(directory);
-          return { name: directoryName, path: directory };
-        })
-      );
-    }
-    setFiles(filesWithName);
-    setDirectories(directoriesWithName);
+    const { files, directories } = result;
+    setFiles(files);
+    setDirectories(directories);
   };
 
   useEffect(() => {

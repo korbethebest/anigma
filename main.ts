@@ -3,6 +3,7 @@ import { dirname, join, sep, basename, extname } from "node:path";
 import { homedir } from "node:os";
 import { fileURLToPath } from "node:url";
 import { promises } from "node:fs";
+import { Info } from "./src/types/types";
 
 const BASE_URL = "http://localhost:5173";
 const env = process.env;
@@ -52,48 +53,8 @@ ipcMain.handle("get-documents-path", () => {
   return join(homedir(), "Documents");
 });
 
-ipcMain.handle("read-directory", async (event, dirPath) => {
-  try {
-    const entries = await promises.readdir(dirPath, { withFileTypes: true });
-
-    if (!entries.length) return { files: [], directories: [] };
-
-    const files: string[] = [];
-    const directories: string[] = [];
-    for (const entry of entries) {
-      const entryPath = join(dirPath, entry.name);
-      if (entry.isFile()) {
-        files.push(entryPath);
-      } else if (entry.isDirectory()) {
-        directories.push(entryPath);
-      }
-    }
-
-    return { files: files, directories: directories };
-  } catch (error) {
-    console.error("Error reading directory:", error);
-    return { files: [], directories: [] };
-  }
-});
-
-ipcMain.handle("select-directory", async () => {
-  const result = await dialog.showOpenDialog({
-    properties: ["openDirectory"],
-  });
-  if (result.canceled) {
-    return null;
-  } else {
-    return result.filePaths[0];
-  }
-});
-
-ipcMain.handle("get-name", async (event, filePath) => {
-  const name = await basename(filePath);
-  return name;
-});
-
-ipcMain.handle("get-file-icon", async (event, filePath) => {
-  const ext = await extname(filePath).toLowerCase();
+const getFileIcon = async (path: string) => {
+  const ext = await extname(path).toLowerCase();
   let defaultIconPath = "./File.png";
   const audioExtensions = [".mp3", ".wav", ".aac", ".flac"];
   const videoExtensions = [
@@ -125,6 +86,58 @@ ipcMain.handle("get-file-icon", async (event, filePath) => {
     defaultIconPath = "./FileImage.png";
   }
   return defaultIconPath;
+};
+
+ipcMain.handle("read-directory", async (event, dirPath) => {
+  try {
+    const entries = await promises.readdir(dirPath, { withFileTypes: true });
+
+    if (!entries.length) return { files: [], directories: [] };
+
+    const files: Info[] = [];
+    const directories: Info[] = [];
+    for (const entry of entries) {
+      const entryPath = join(dirPath, entry.name);
+      const entryStat = await promises.stat(entryPath);
+      if (entry.isFile()) {
+        files.push({
+          name: entry.name,
+          path: entryPath,
+          icon: await getFileIcon(entryPath),
+          size: entryStat.size,
+          dateModified: entryStat.mtime,
+          dateCreated: entryStat.birthtime,
+          extension: extname(entryPath),
+        });
+      } else if (entry.isDirectory()) {
+        directories.push({
+          name: entry.name,
+          path: entryPath,
+          icon: "./public/FolderSimple.png",
+          size: entryStat.size,
+          dateModified: entryStat.mtime,
+          dateCreated: entryStat.birthtime,
+          extension: extname(entryPath),
+        });
+      }
+    }
+
+    return { files: files, directories: directories };
+  } catch (error) {
+    console.error("Error reading directory:", error);
+    return { files: [], directories: [] };
+  }
+});
+
+ipcMain.handle("select-directory", async () => {
+  const result = await dialog.showOpenDialog({
+    properties: ["openDirectory"],
+  });
+  if (result.canceled) {
+    return null;
+  } else {
+    return result.filePaths[0];
+  }
 });
 
 ipcMain.handle("read-file", async (event, filePath) => {

@@ -10,10 +10,8 @@ declare global {
     getDocumentsPath: () => Promise<string>;
     readDirectory: (
       dirPath: string
-    ) => Promise<{ files: string[]; directories: string[] }>;
+    ) => Promise<{ files: Info[]; directories: Info[] }>;
     selectDirectory: () => Promise<string | null>;
-    getName: (filePath: string) => Promise<string>;
-    getFileIcon: (filePath: string) => Promise<string>;
     readFile: (filePath: string) => Promise<any>;
     openImageWindow: (imageData: string) => void;
     openVideoWindow: (videoData: string) => void;
@@ -25,13 +23,14 @@ declare global {
   }
 }
 
-export interface FileInfo {
+export interface Info {
   name: string;
   path: string;
   icon: string;
+  size: number;
+  dateModified: Date;
+  dateCreated: Date;
+  extension: string;
 }
 
-export interface DirectoryInfo {
-  name: string;
-  path: string;
-}
+export type Criteria = Omit<Info, "path" | "icon">;
