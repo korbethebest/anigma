@@ -68,49 +68,57 @@ export default function Main({
     <main className={style.main}>
       {loading ? (
         <div className={style.title}>Loading...</div>
-      ) : files.length || directories.length ? (
-        <div className={style.gap20}>
-          <div>
-            <div className={style.title}>Directories:</div>
-            <div className={style.container}>
-              {directories.map((directory, index) => (
-                <div
-                  key={index}
-                  className={style.row}
-                  onDoubleClick={() =>
-                    handleDirectoryDoubleClick(directory.path)
-                  }
-                >
-                  <img
-                    src="./FolderSimple.png"
-                    alt={directory.name}
-                    className={style.icon}
-                  />
-                  {directory.name}
-                </div>
-              ))}
-            </div>
-          </div>
-          <div>
-            <div className={style.title}>Files:</div>
-            <div className={style.container}>
-              {files.map((file, index) => (
-                <div
-                  key={index}
-                  className={style.row}
-                  onDoubleClick={() => handleFileDoubleClick(file.path)}
-                >
-                  <img src={file.icon} alt={file.name} className={style.icon} />
-                  {file.name}
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
       ) : (
-        <div className={style.title}>
-          Neither file nor subdirectory is found!
-        </div>
+        <>
+          {files.length || directories.length ? (
+            <div className={style.gap20}>
+              <div>
+                <div className={style.title}>Directories:</div>
+                <div className={style.container}>
+                  {directories.map((directory, index) => (
+                    <div
+                      key={index}
+                      className={style.row}
+                      onDoubleClick={() =>
+                        handleDirectoryDoubleClick(directory.path)
+                      }
+                    >
+                      <img
+                        src="./FolderSimple.png"
+                        alt={directory.name}
+                        className={style.icon}
+                      />
+                      {directory.name}
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <div className={style.title}>Files:</div>
+                <div className={style.container}>
+                  {files.map((file, index) => (
+                    <div
+                      key={index}
+                      className={style.row}
+                      onDoubleClick={() => handleFileDoubleClick(file.path)}
+                    >
+                      <img
+                        src={file.icon}
+                        alt={file.name}
+                        className={style.icon}
+                      />
+                      {file.name}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className={style.title}>
+              Neither file nor subdirectory is found!
+            </div>
+          )}
+        </>
       )}
     </main>
   );

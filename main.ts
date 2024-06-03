@@ -1,5 +1,5 @@
 import { app, BrowserWindow, ipcMain, dialog } from "electron";
-import { dirname, join, sep, basename, extname } from "node:path";
+import { dirname, join, sep, extname } from "node:path";
 import { homedir } from "node:os";
 import { fileURLToPath } from "node:url";
 import { promises } from "node:fs";
