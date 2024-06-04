@@ -48,7 +48,7 @@ export default function Main({
   const handleFileDoubleClick = async (filePath: string) => {
     const fileType = checkExtension(filePath);
     if (!fileType) {
-      alert(`Failed to read file: ${filePath}!`);
+      alert(`This file is not supported: ${filePath}!`);
       return;
     }
 
