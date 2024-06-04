@@ -82,6 +82,7 @@ export default function Main({
                       onDoubleClick={() =>
                         handleDirectoryDoubleClick(directory.path)
                       }
+                      data-testid="directory"
                     >
                       <img
                         src="./FolderSimple.png"
@@ -101,6 +102,7 @@ export default function Main({
                       key={index}
                       className={style.row}
                       onDoubleClick={() => handleFileDoubleClick(file.path)}
+                      data-testid="file"
                     >
                       <img
                         src={file.icon}

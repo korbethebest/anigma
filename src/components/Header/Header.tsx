@@ -50,7 +50,11 @@ export default function Header({
       {rootDirectoryPath === displayDirectoryPath ? (
         <div className={style.blank} />
       ) : (
-        <div className={style.icon} onClick={handleGoBack}>
+        <div
+          className={style.icon}
+          onClick={handleGoBack}
+          data-testid="go-back"
+        >
           <svg
             width="100%"
             height="100%"
@@ -62,7 +66,7 @@ export default function Header({
         </div>
       )}
       <div className={style.title}>
-        {displayDirectoryPath || "NOT SELECTED"}
+        <h1>{displayDirectoryPath || "NOT SELECTED"}</h1>
       </div>
       <div className={style.icon} onClick={handleSelectDirectory}>
         <svg
