@@ -23,7 +23,7 @@ to navigate through directories and explore files with minimal effort.
 
 ## Features
 
-![Application Features](./public/application_features.png)
+![Application Features](./src/public/application_features.png)
 
 1. **Previous Button**
 
