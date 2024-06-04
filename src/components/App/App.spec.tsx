@@ -2,7 +2,7 @@ import "@testing-library/jest-dom";
 import { screen, render, act } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import App from "./App";
-import { testFileList, testDirectoryList } from "./utils/utils";
+import { testFileList, testDirectoryList } from "../../utils/utils";
 
 beforeEach(() => {
   global.window = Object.create(window);

@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { Info, Criteria } from "./types/types";
-import Header from "./components/Header/Header";
-import FilterAndSort from "./components/FilterAndSort/FilterAndSort";
-import Main from "./components/Main/Main";
-import { sortByCriteria } from "./utils/utils";
+import { Info, Criteria } from "../../types/types";
+import Header from "../Header/Header";
+import FilterAndSort from "../FilterAndSort/FilterAndSort";
+import Main from "../Main/Main";
+import { sortByCriteria } from "../../utils/utils";
 
 function App() {
   const [currentDirectory, setCurrentDirectory] = useState("");
