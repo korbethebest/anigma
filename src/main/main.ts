@@ -3,7 +3,7 @@ import { dirname, join, sep, extname } from "node:path";
 import { homedir } from "node:os";
 import { fileURLToPath } from "node:url";
 import { promises } from "node:fs";
-import { Info } from "./src/types/types";
+import { Info } from "../types/types";
 
 const BASE_URL = "http://localhost:5173";
 const env = process.env;
@@ -88,7 +88,7 @@ const getFileIcon = async (path: string) => {
   return defaultIconPath;
 };
 
-ipcMain.handle("read-directory", async (event, dirPath) => {
+ipcMain.handle("read-directory", async (_, dirPath) => {
   try {
     const entries = await promises.readdir(dirPath, { withFileTypes: true });
 
@@ -140,7 +140,7 @@ ipcMain.handle("select-directory", async () => {
   }
 });
 
-ipcMain.handle("read-file", async (event, filePath) => {
+ipcMain.handle("read-file", async (_, filePath) => {
   try {
     const data = await promises.readFile(filePath, "base64");
     return data;
@@ -166,7 +166,7 @@ function checkFileSize(base64Data: string) {
   } else return true;
 }
 
-ipcMain.on("open-image-window", (event, imageData) => {
+ipcMain.on("open-image-window", (_, imageData) => {
   const isReadable = checkFileSize(imageData);
   if (!isReadable) {
     dialog.showMessageBox({
@@ -214,7 +214,7 @@ ipcMain.on("open-image-window", (event, imageData) => {
     </html>`);
 });
 
-ipcMain.on("open-video-window", (event, videoData) => {
+ipcMain.on("open-video-window", (_, videoData) => {
   const isReadable = checkFileSize(videoData);
   if (!isReadable) {
     dialog.showMessageBox({
@@ -282,7 +282,7 @@ ipcMain.on("open-video-window", (event, videoData) => {
     </html>`);
 });
 
-ipcMain.on("open-audio-window", (event, audioData) => {
+ipcMain.on("open-audio-window", (_, audioData) => {
   const isReadable = checkFileSize(audioData);
   if (!isReadable) {
     dialog.showMessageBox({
@@ -333,7 +333,7 @@ ipcMain.on("open-audio-window", (event, audioData) => {
     </html>`);
 });
 
-ipcMain.on("open-text-window", async (event, filePath) => {
+ipcMain.on("open-text-window", async (_, filePath) => {
   try {
     const textContent = await promises.readFile(filePath, "utf-8");
 
