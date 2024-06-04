@@ -47,7 +47,20 @@ to navigate through directories and explore files with minimal effort.
   as well as the files and subdirectories displayed below,  
   will be updated based on the new root directory.
 
-4. **Directories**
+4. **Search and Filter**
+
+- A search filter that filters only files and subdirectories that contain search terms.
+- It is in the form of input and can be typed.
+- If the input is empty, all files and subdirectories are displayed.
+
+5. **Sort Criteria Dropbox**
+
+- Sort files and subdirectories according to the given criteria.
+- It is a drop box with 5 sorting criteria.
+- There are five criteria available: 'name', 'size', 'date modified', 'date created', and 'extension'.
+- All criteria are sorted in ascending order.
+
+6. **Directories**
 
 - It shows the subdirectories in the current directory.
 - Double-clicking a subdirectory will navigate to that subdirectory,  
@@ -55,7 +68,7 @@ to navigate through directories and explore files with minimal effort.
 - If the selected subdirectory contains no files or subdirectories,  
   a warning message will appear, preventing access.
 
-5. **Files**
+7. **Files**
 
 - It shows the files in the current directory.
 - Different icons are applied depending on the file type.
@@ -110,7 +123,7 @@ npm install
 
 # Usage
 
-1. Testing the application locally
+1. Experiencing the application locally
 
 ```bash
 npm run dev
@@ -118,14 +131,20 @@ npm run build:dev
 npm run dev:electron
 ```
 
-2. Packaging the application on Windows
+2. Testing the application
+
+```bash
+npm run test
+```
+
+3. Packaging the application on Windows
 
 ```bash
 npm run build:prod
 npm run package-win
 ```
 
-3. Packaging the application on Mac
+4. Packaging the application on Mac
 
 ```bash
 npm run build:prod

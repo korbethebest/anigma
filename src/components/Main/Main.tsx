@@ -71,7 +71,7 @@ export default function Main({
       ) : (
         <>
           {files.length || directories.length ? (
-            <div className={style.gap20}>
+            <div className={style.gap60}>
               <div>
                 <div className={style.title}>Directories:</div>
                 <div className={style.container}>
